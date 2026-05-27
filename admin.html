@@ -45,7 +45,22 @@ header p {
     padding: 22px;
     margin-bottom: 18px;
 }
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+    z-index: 1000;
+}
 
+.back-button:hover {
+    background: #f1f5f9;
+}
 .question {
     font-size: 18px;
     font-weight: 700;
@@ -100,7 +115,11 @@ button:hover {
 </style>
 </head>
 <body>
-
+    
+<button class="back-button" onclick="goBack()">
+    ← Retour à la FAQ
+</button>
+    
 <header>
     <h1>Administration FAQ</h1>
     <p>Répondre aux questions et modifier leur catégorie</p>
@@ -125,6 +144,12 @@ const BRANCH = "main";
 let faqData = [];
 let categories = [];
 
+    
+function goBack() {
+    window.location.href = "index.html";
+}
+
+    
 /* =========================
 LOAD FAQ
 ========================= */
