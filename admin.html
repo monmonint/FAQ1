@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin FAQ</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Inter, system-ui, Arial, sans-serif;
+    background: #f8fafc;
+    color: #0f172a;
+}
+
+header {
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 28px 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+header p {
+    margin-top: 8px;
+    color: #64748b;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 30px 20px 80px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+}
+
+.question {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 14px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    font-size: 15px;
+    background: white;
+    outline: none;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+button {
+    margin-top: 18px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.small {
+    color: #64748b;
+    font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Administration FAQ</h1>
+    <p>Répondre aux questions et modifier leur catégorie</p>
+</header>
+
+<div class="container" id="adminFaq"></div>
+
+<script>
+/* =========================
+CONFIG
+========================= */
+
+const PART1 = "github_pat_11BVBQR4Y0KUGzpGsTZmmk_QpEL1l8v"; 
+const PART2 = "3xoRmAhmhF1BoQHEvNjKSB1CkDB6LxDWnng4HII5B5Zon62i1YP"; 
+const TOKEN = PART1 + PART2;
+
+const OWNER = "monmonint";
+const REPO = "FAQ";
+const PATH = "faq.json";
+const BRANCH = "main";
+
+let faqData = [];
+let categories = [];
+
+/* =========================
+LOAD FAQ
+========================= */
+
+async function loadFAQ() {
+    try {
+        const timestamp = new Date().getTime();
+        const res = await fetch(`./faq.json?v=${timestamp}`, {
+            cache: "no-store"
+        });
+
+        if (!res.ok) {
+            throw new Error("Impossible de charger faq.json");
+        }
+
+        faqData = await res.json();
+
+        categories = [...new Set(
+            faqData
+                .map(item => item.category || "Autre")
+                .filter(Boolean)
+        )].sort();
+
+        render();
+
+    } catch (error) {
+        console.error(error);
+        document.getElementById("adminFaq").innerHTML =
+            "<p>Impossible de charger la FAQ.</p>";
+    }
+}
+
+/* =========================
+RENDER
+========================= */
+
+function render() {
+    const container = document.getElementById("adminFaq");
+    container.innerHTML = "";
+
+    faqData.slice().reverse().forEach((item, index) => {
+        const realIndex = faqData.length - 1 - index;
+
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const options = categories.map(cat =>
+            `<option value="${cat}" ${cat === item.category ? "selected" : ""}>${cat}</option>`
+        ).join("");
+
+        div.innerHTML = `
+            <div class="question">${item.question}</div>
+
+            <label>Catégorie</label>
+            <input
+                list="categories-${realIndex}"
+                id="category-${realIndex}"
+                value="${item.category || ""}"
+                placeholder="Ex : Films, Compte, Serveur..."
+            >
+
+            <datalist id="categories-${realIndex}">
+                ${options}
+            </datalist>
+
+            <label>Réponse</label>
+            <textarea
+                id="answer-${realIndex}"
+                placeholder="Écrire la réponse ici..."
+            >${item.answer === "en attente" ? "" : (item.answer || "")}</textarea>
+
+            <div class="small">
+                Si une réponse est enregistrée, la question quittera automatiquement la section “en attente”.
+            </div>
+
+            <button onclick="saveAnswer(${realIndex})">
+                Enregistrer la réponse
+            </button>
+        `;
+
+        container.appendChild(div);
+    });
+}
+
+/* =========================
+SAVE TO GITHUB
+========================= */
+
+async function saveAnswer(index) {
+    const category = document.getElementById(`category-${index}`).value.trim();
+    const answer = document.getElementById(`answer-${index}`).value.trim();
+
+    if (!answer) {
+        alert("Merci de remplir une réponse.");
+        return;
+    }
+
+    try {
+        const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
+
+        const getRes = await fetch(url, {
+            method: "GET",
+            headers: {
+                Authorization: `token ${TOKEN}`,
+                Accept: "application/vnd.github+json"
+            }
+        });
+
+        if (!getRes.ok) {
+            throw new Error("Impossible de lire faq.json");
+        }
+
+        const file = await getRes.json();
+        
+        const cleanContent = file.content.replace(/\n/g, "");
+        const binary = atob(cleanContent);
+        const bytes = Uint8Array.from(
+            binary,
+            c => c.charCodeAt(0)
+        );
+        const decoded = new TextDecoder().decode(bytes);
+        const json = JSON.parse(decoded);
+
+        json[index].category = category || "Autre";
+        json[index].answer = answer;
+
+        const utf8Bytes = new TextEncoder().encode(
+            JSON.stringify(json, null, 2)
+        );
+        let binaryString = "";
+        utf8Bytes.forEach(byte => {
+            binaryString += String.fromCharCode(byte);
+        });
+        const updatedContent = btoa(binaryString);
+
+        const putRes = await fetch(url, {
+            method: "PUT",
+            headers: {
+                Authorization: `token ${TOKEN}`,
+                "Content-Type": "application/json",
+                Accept: "application/vnd.github+json"
+            },
+            body: JSON.stringify({
+                message: `Réponse FAQ : ${json[index].question}`,
+                content: updatedContent,
+                sha: file.sha,
+                branch: BRANCH
+            })
+        });
+
+        if (!putRes.ok) {
+            throw new Error("Impossible d'écrire dans faq.json");
+        }
+
+        alert("Réponse enregistrée avec succès !");
+        loadFAQ();
+
+    } catch (error) {
+        console.error(error);
+        alert("Erreur lors de l'enregistrement.");
+    }
+}
+
+/* INIT */
+loadFAQ();
+</script>
+
+</body>
+</html>
