@@ -52,7 +52,7 @@ header p {
     padding: 10px 14px;
     border-radius: 10px;
     border: 1px solid #cbd5e1;
-    background: white;
+    background: blue;
     cursor: pointer;
     font-weight: 600;
     z-index: 1000;
@@ -228,6 +228,10 @@ function render() {
             <button onclick="saveAnswer(${realIndex})">
                 Enregistrer la réponse
             </button>
+            <button onclick="deleteQuestion(${realIndex})"
+            style="margin-top:10px;background:#ef4444;color:white;border:none;padding:10px;border-radius:8px;cursor:pointer;">
+            Supprimer
+            </button>
         `;
 
         container.appendChild(div);
@@ -237,7 +241,59 @@ function render() {
 /* =========================
 SAVE TO GITHUB
 ========================= */
+async function deleteQuestion(index) {
 
+    if (!confirm("Tu veux vraiment supprimer cette question ?")) return;
+
+    const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
+
+    const getRes = await fetch(url, {
+        headers: {
+            Authorization: `token ${TOKEN}`,
+            Accept: "application/vnd.github+json"
+        }
+    });
+
+    const file = await getRes.json();
+
+    const clean = file.content.replace(/\n/g, "");
+
+    const binary = atob(clean);
+    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+    const decoded = new TextDecoder().decode(bytes);
+
+    const json = JSON.parse(decoded);
+
+    json.splice(index, 1);
+
+    const utf8 = new TextEncoder().encode(
+        JSON.stringify(json, null, 2)
+    );
+
+    let binaryString = "";
+    utf8.forEach(b => binaryString += String.fromCharCode(b));
+
+    const updated = btoa(binaryString);
+
+    await fetch(url, {
+        method: "PUT",
+        headers: {
+            Authorization: `token ${TOKEN}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: "delete question",
+            content: updated,
+            sha: file.sha,
+            branch: BRANCH
+        })
+    });
+
+    alert("Question supprimée !");
+    location.reload();
+}
+
+    
 async function saveAnswer(index) {
     const category = document.getElementById(`category-${index}`).value.trim();
     const answer = document.getElementById(`answer-${index}`).value.trim();
