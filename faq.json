@@ -1,10 +1,5 @@
 [
   {
-    "category": "Compte",
-    "question": "Comment accÃÂ©der au serveur ?",
-    "answer": "Utilise ton compte invitÃÂ© ou l'invitation fournie par l'admin."
-  },
-  {
     "category": "Serveur",
     "question": "Le serveur est lent, que faire ?",
     "answer": "VÃÂ©rifie ta connexion ou contacte le support si le problÃÂ¨me persiste."
