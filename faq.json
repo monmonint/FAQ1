@@ -2,17 +2,17 @@
   {
     "category": "Serveur",
     "question": "Le serveur est lent, que faire ?",
-    "answer": "VÃÂ©rifie ta connexion ou contacte le support si le problÃÂ¨me persiste."
+    "answer": "Vérifie ta connexion ou contacte le support si le problème persiste."
   },
   {
     "category": "Contenu",
     "question": "Comment ajouter un film ?",
-    "answer": "Seuls les administrateurs peuvent ajouter du contenu."
+    "answer": "Go sur onglet request avec tes id du server."
   },
   {
     "category": "Utilisateur",
     "question": "je veux le film ocean eleven",
-    "answer": "DÃÂ©brouille toi"
+    "answer": "Débrouille toi"
   },
   {
     "category": "Utilisateur",
@@ -22,7 +22,7 @@
   {
     "category": "Serveur",
     "question": "ajout",
-    "answer": "Allez sur jelysser, si vous n'arrivez pas ÃÂ ÃÂ  y accÃÂ©der vous pouvez y accÃÂ©der au 100.69.195.23:5055"
+    "answer": "Allez sur jelysser, si vous n'arrivez pas à y accéder vous pouvez y accéder au 100.69.195.23:5055"
   },
   {
     "category": "Utilisateur",
@@ -32,7 +32,7 @@
   {
     "category": "Utilisateur",
     "question": "Comment manger le pain ?",
-    "answer": "hÃ© l'autre Ã§a va oÃ¹"
+    "answer": "hé l'autre ça va oû_"
   },
   {
     "category": "Utilisateur",
