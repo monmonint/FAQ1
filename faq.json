@@ -48,5 +48,10 @@
     "category": "Utilisateur",
     "question": "J'ai panique, j'ai mangé le serveur jellyfin et ça a un goût de lithium qui a dépassé sa date de péremption, que faire ?",
     "answer": "en attente"
+  },
+  {
+    "category": "Utilisateur",
+    "question": "By the way, comment on trouve la date de péremption sur son lithium de compagnie ?",
+    "answer": "en attente"
   }
 ]
