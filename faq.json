@@ -1,10 +1,5 @@
 [
   {
-    "category": "Serveur",
-    "question": "Le serveur est lent, que faire ?",
-    "answer": "Vérifie ta connexion ou contacte le support si le problème persiste."
-  },
-  {
     "category": "Contenu",
     "question": "Comment ajouter un film ?",
     "answer": "Go sur onglet request avec tes id du server."
