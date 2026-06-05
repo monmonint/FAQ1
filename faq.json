@@ -2,7 +2,7 @@
   {
     "category": "Contenu",
     "question": "Comment ajouter un film ?",
-    "answer": "Go sur onglet request avec tes id du server."
+    "answer": "Go sur onglet request avec tes id du server. Si ca marche pas vas sur le http://100.69.195.23:5055 cela necessite une connection à tailscale."
   },
   {
     "category": "Utilisateur",
